@@ -6,7 +6,7 @@ import { Head, useForm } from "@inertiajs/react";
 import { ExternalLink, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, FieldError, Input, Label, PageHeader, Textarea } from "@gobiz/admin";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, FieldError, Input, Label, PageHeader, RichTextEditor, Textarea } from "@gobiz/admin";
 
 type Field = { id: number; label: string; content: string };
 type Group = { name: string; fields: Field[] };
@@ -14,6 +14,7 @@ type Seo = { title: string; description: string; keywords: string };
 type Props = {
     page: { key: string; name: string; path: string | null };
     groups: Group[];
+    policyContent: string | null;
     seo: Seo | null;
     siteUrl: string;
 };
@@ -21,10 +22,11 @@ type Props = {
 /** Short values (titles, button text, links) get a one-line input; longer text a textarea */
 const isShort = (field: Field) => field.content.length <= 80 && !field.content.includes("\n") && !/description|answer|content|text$/i.test(field.label);
 
-export default function EditPage({ page, groups, seo, siteUrl }: Props) {
+export default function EditPage({ page, groups, policyContent, seo, siteUrl }: Props) {
     const { t } = useTranslation();
     const form = useForm({
         sections: Object.fromEntries(groups.flatMap((group) => group.fields.map((field) => [String(field.id), field.content]))) as Record<string, string>,
+        policy_content: policyContent ?? "",
         title: seo?.title ?? "",
         description: seo?.description ?? "",
         keywords: seo?.keywords ?? "",
@@ -65,6 +67,30 @@ export default function EditPage({ page, groups, seo, siteUrl }: Props) {
                 />
 
                 <div className="grid max-w-4xl gap-6">
+                    {policyContent !== null && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>{t("Page content")}</CardTitle>
+                                <CardDescription>
+                                    {t(
+                                        "Edit the complete page content and formatting.",
+                                    )}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex flex-col gap-2">
+                                <Label>{t("Content")}</Label>
+                                <RichTextEditor
+                                    value={data.policy_content}
+                                    onChange={(html) =>
+                                        setData("policy_content", html)
+                                    }
+                                    invalid={!!errors.policy_content}
+                                    minHeight={480}
+                                />
+                                <FieldError message={errors.policy_content} />
+                            </CardContent>
+                        </Card>
+                    )}
                     {groups.map((group) => (
                         <Card key={group.name}>
                             {groups.length > 1 && (
@@ -81,13 +107,36 @@ export default function EditPage({ page, groups, seo, siteUrl }: Props) {
                                         <div key={field.id} className={short ? "flex flex-col gap-2" : "flex flex-col gap-2 sm:col-span-2"}>
                                             <Label htmlFor={id}>{field.label}</Label>
                                             {short ? (
-                                                <Input id={id} value={data.sections[field.id] ?? ""} onChange={(event) => setSection(field.id, event.target.value)} aria-invalid={!!error} />
+                                                <Input
+                                                    id={id}
+                                                    value={
+                                                        data.sections[
+                                                            field.id
+                                                        ] ?? ""
+                                                    }
+                                                    onChange={(event) =>
+                                                        setSection(
+                                                            field.id,
+                                                            event.target.value,
+                                                        )
+                                                    }
+                                                    aria-invalid={!!error}
+                                                />
                                             ) : (
                                                 <Textarea
                                                     id={id}
                                                     rows={4}
-                                                    value={data.sections[field.id] ?? ""}
-                                                    onChange={(event) => setSection(field.id, event.target.value)}
+                                                    value={
+                                                        data.sections[
+                                                            field.id
+                                                        ] ?? ""
+                                                    }
+                                                    onChange={(event) =>
+                                                        setSection(
+                                                            field.id,
+                                                            event.target.value,
+                                                        )
+                                                    }
                                                     aria-invalid={!!error}
                                                 />
                                             )}

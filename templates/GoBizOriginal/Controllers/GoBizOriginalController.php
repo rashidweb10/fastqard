@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Collection;
 use Mews\Purifier\Facades\Purifier;
 
 /**
@@ -113,7 +114,8 @@ class GoBizOriginalController extends Controller
         $rows = DB::table('pages')->where('template_id', self::TEMPLATE)->where('page_name', $id)->orderBy('id')->get();
         abort_unless($rows->isNotEmpty(), 404);
 
-        $groups = $rows->groupBy(fn ($row) => (string) $row->section_name)->map(fn ($fields, $group) => [
+        $isPolicyPage = in_array($id, ['privacy', 'refund', 'terms'], true);
+        $groups = $isPolicyPage ? collect() : $rows->groupBy(fn ($row) => (string) $row->section_name)->map(fn ($fields, $group) => [
             'name'   => __(self::label($group)),
             'fields' => $fields->map(fn ($row) => [
                 'id'      => $row->id,
@@ -127,6 +129,7 @@ class GoBizOriginalController extends Controller
         return PluginPage::template(self::TEMPLATE, 'edit-page', [
             'page'    => ['key' => $id, 'name' => __(self::PAGES[$id][0]), 'path' => self::PAGES[$id][1]],
             'groups'  => $groups,
+            'policyContent' => $isPolicyPage ? $this->policyContent($rows) : null,
             // The footer is shared by every page, so it has no search engine details
             'seo'     => $id === 'footer' ? null : [
                 'title'       => (string) $first->title,
@@ -148,15 +151,24 @@ class GoBizOriginalController extends Controller
         abort_unless(array_key_exists($id, self::PAGES), 404);
 
         $ids = DB::table('pages')->where('template_id', self::TEMPLATE)->where('page_name', $id)->pluck('id')->map(fn ($v) => (string) $v)->all();
+        abort_unless($ids, 404);
+        $isPolicyPage = in_array($id, ['privacy', 'refund', 'terms'], true);
         $seo = $id !== 'footer';
 
-        $request->validate([
-            'sections'    => 'required|array',
-            'sections.*'  => 'nullable|string|max:65000',
+        $rules = [
             'title'       => [$seo ? 'required' : 'nullable', 'string', 'max:1000'],
             'description' => [$seo ? 'required' : 'nullable', 'string', 'max:2000'],
             'keywords'    => [$seo ? 'required' : 'nullable', 'string', 'max:2000'],
-        ], [], [
+        ];
+
+        if ($isPolicyPage) {
+            $rules['policy_content'] = 'required|string|max:500000';
+        } else {
+            $rules['sections'] = 'required|array';
+            $rules['sections.*'] = 'nullable|string|max:65000';
+        }
+
+        $request->validate($rules, [], [
             'title'       => __('meta title'),
             'description' => __('meta description'),
             'keywords'    => __('meta keywords'),
@@ -165,12 +177,20 @@ class GoBizOriginalController extends Controller
         // Only rows of this page can be changed
         $sections = collect($request->input('sections'))->only($ids);
 
-        DB::transaction(function () use ($sections, $id, $seo, $request) {
-            foreach ($sections as $rowId => $content) {
-                DB::table('pages')->where('template_id', self::TEMPLATE)->where('id', $rowId)->update([
-                    'section_content' => $content === '' ? null : $content,
+        DB::transaction(function () use ($sections, $ids, $id, $isPolicyPage, $seo, $request) {
+            if ($isPolicyPage) {
+                DB::table('pages')->where('template_id', self::TEMPLATE)->where('id', $ids[0])->update([
+                    'section_title'   => 'rich_content',
+                    'section_content' => $this->cleanBody($request->input('policy_content')),
                     'updated_at'      => now(),
                 ]);
+            } else {
+                foreach ($sections as $rowId => $content) {
+                    DB::table('pages')->where('template_id', self::TEMPLATE)->where('id', $rowId)->update([
+                        'section_content' => $content === '' ? null : $content,
+                        'updated_at'      => now(),
+                    ]);
+                }
             }
 
             if ($seo) {
@@ -183,6 +203,26 @@ class GoBizOriginalController extends Controller
         });
 
         return back()->with('success', __('Page saved.'));
+    }
+
+    private function policyContent(Collection $rows): string
+    {
+        $first = $rows->first();
+        if ($first->section_title === 'rich_content') {
+            return (string) $first->section_content;
+        }
+
+        return $rows->values()->reduce(function (string $html, $row, int $index) {
+            $content = trim((string) $row->section_content);
+            if ($content === '') {
+                return $html;
+            }
+
+            $content = htmlspecialchars((string) __($content), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $tag = $index === 0 ? 'h1' : (str_ends_with((string) $row->section_title, '_title') ? 'h2' : 'p');
+
+            return $html . '<' . $tag . '>' . $content . '</' . $tag . '>';
+        }, '');
     }
 
     // Custom pages (shown at /p/<slug>)

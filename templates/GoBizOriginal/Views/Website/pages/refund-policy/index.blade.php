@@ -1,8 +1,22 @@
 @extends('GoBizOriginal::Website.layouts.index', ['nav' => true, 'banner' => false, 'footer' => true, 'cookie' => true, 'setting' => true, 'title' => __('Refund Policy')])
 
+@section('custom-script')
+    <link rel="stylesheet" href="{{ asset('gobiz_original_assets/css/custom-style.css') }}">
+@endsection
+
 @section('content')
     {{-- Refund policy page --}}
     <section class="pt-12 lg:pb-20 lg:px-24 overflow-hidden">
+        @php
+            $richPolicy = collect($refundPage)->firstWhere('section_title', 'rich_content');
+        @endphp
+        @if ($richPolicy)
+            <div class="container mx-auto px-4">
+                <div class="prose prose-lg prose-slate max-w-none">
+                    {!! \Mews\Purifier\Facades\Purifier::clean($richPolicy->section_content) !!}
+                </div>
+            </div>
+        @else
         <div class="container mx-auto px-4">
             <div class="max-w-full mx-auto mb-20">
                 <h2 class="mb-4 font-heading font-semibold text-center text-6xl sm:text-7xl text-gray-900 break-words">
@@ -158,5 +172,6 @@
                 @endif
             </div>
         </div>
+        @endif
     </section>
 @endsection
