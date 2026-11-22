@@ -44,6 +44,34 @@ type Values = {
     currency_decimals_place: string;
     image_limit: string;
     share_content: string;
+    seo_meta_description: string;
+    seo_meta_keywords: string;
+    seo_author: string;
+    seo_copyright: string;
+    seo_robots: string;
+    seo_googlebot: string;
+    seo_geo_region: string;
+    seo_theme_color: string;
+    seo_canonical: string;
+    seo_og_type: string;
+    seo_og_url: string;
+    seo_og_title: string;
+    seo_og_description: string;
+    seo_og_image: string;
+    seo_og_locale: string;
+    seo_og_site_name: string;
+    seo_twitter_card: string;
+    seo_twitter_url: string;
+    seo_twitter_title: string;
+    seo_twitter_description: string;
+    seo_twitter_image: string;
+    seo_application_name: string;
+    seo_apple_title: string;
+    seo_format_detection: string;
+    seo_distribution: string;
+    seo_rating: string;
+    seo_revisit_after: string;
+    seo_language: string;
 };
 
 type Props = {
@@ -536,6 +564,76 @@ export default function GeneralSettings({
                                 )}
                             </p>
                         </Field>
+                    </Section>
+
+                    <Section
+                        title={t("Search engine and social metadata")}
+                        description={t(
+                            "Control the title, description and preview shown on search engines and social networks.",
+                        )}
+                    >
+                        <div className="grid gap-5 sm:grid-cols-2">
+                            <Field id="seo_meta_description" label={t("Meta description")} error={errors.seo_meta_description}>
+                                <Textarea id="seo_meta_description" value={data.seo_meta_description} onChange={(e) => setData("seo_meta_description", e.target.value)} className="min-h-24" />
+                            </Field>
+                            <Field id="seo_meta_keywords" label={t("Meta keywords")} error={errors.seo_meta_keywords}>
+                                <Textarea id="seo_meta_keywords" value={data.seo_meta_keywords} onChange={(e) => setData("seo_meta_keywords", e.target.value)} className="min-h-24" />
+                            </Field>
+                            {([
+                                ["seo_author", t("Author")],
+                                ["seo_copyright", t("Copyright")],
+                                ["seo_robots", t("Robots")],
+                                ["seo_googlebot", t("Googlebot")],
+                                ["seo_geo_region", t("Geo region")],
+                                ["seo_theme_color", t("Theme colour")],
+                                ["seo_canonical", t("Canonical URL")],
+                                ["seo_application_name", t("Application name")],
+                                ["seo_apple_title", t("Apple app title")],
+                                ["seo_format_detection", t("Format detection")],
+                                ["seo_distribution", t("Distribution")],
+                                ["seo_rating", t("Rating")],
+                                ["seo_revisit_after", t("Revisit after")],
+                                ["seo_language", t("Language")],
+                            ] as const).map(([name, label]) => (
+                                <Field key={name} id={name} label={label} error={errors[name]}>
+                                    <Input id={name} value={data[name]} onChange={(e) => setData(name, e.target.value)} />
+                                </Field>
+                            ))}
+                        </div>
+                    </Section>
+
+                    <Section
+                        title={t("Open Graph and Twitter")}
+                        description={t(
+                            "Metadata used when your website is shared on Facebook, WhatsApp and X.",
+                        )}
+                    >
+                        <div className="grid gap-5 sm:grid-cols-2">
+                            {([
+                                ["seo_og_type", t("Open Graph type")],
+                                ["seo_og_url", t("Open Graph URL")],
+                                ["seo_og_title", t("Open Graph title")],
+                                ["seo_og_description", t("Open Graph description")],
+                                ["seo_og_image", t("Open Graph image URL")],
+                                ["seo_og_locale", t("Open Graph locale")],
+                                ["seo_og_site_name", t("Open Graph site name")],
+                                ["seo_twitter_card", t("Twitter card")],
+                                ["seo_twitter_url", t("Twitter URL")],
+                                ["seo_twitter_title", t("Twitter title")],
+                                ["seo_twitter_description", t("Twitter description")],
+                                ["seo_twitter_image", t("Twitter image URL")],
+                            ] as const).map(([name, label]) =>
+                                name === "seo_og_description" || name === "seo_twitter_description" ? (
+                                    <Field key={name} id={name} label={label} error={errors[name]}>
+                                        <Textarea id={name} value={data[name]} onChange={(e) => setData(name, e.target.value)} className="min-h-24" />
+                                    </Field>
+                                ) : (
+                                    <Field key={name} id={name} label={label} error={errors[name]}>
+                                        <Input id={name} value={data[name]} onChange={(e) => setData(name, e.target.value)} />
+                                    </Field>
+                                ),
+                            )}
+                        </div>
                     </Section>
 
                     <Section

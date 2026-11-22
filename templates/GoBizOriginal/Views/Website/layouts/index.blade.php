@@ -15,6 +15,47 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    @php
+        $seo = DB::table('config')->whereIn('config_key', [
+            'seo_meta_description', 'seo_meta_keywords', 'seo_author', 'seo_copyright',
+            'seo_robots', 'seo_googlebot', 'seo_geo_region', 'seo_theme_color',
+            'seo_canonical', 'seo_og_type', 'seo_og_url', 'seo_og_title',
+            'seo_og_description', 'seo_og_image', 'seo_og_locale', 'seo_og_site_name',
+            'seo_twitter_card', 'seo_twitter_url', 'seo_twitter_title',
+            'seo_twitter_description', 'seo_twitter_image', 'seo_application_name',
+            'seo_apple_title', 'seo_format_detection', 'seo_distribution',
+            'seo_rating', 'seo_revisit_after', 'seo_language',
+        ])->pluck('config_value', 'config_key');
+    @endphp
+    @if($seo->get('seo_meta_description')) <meta name="description" content="{{ $seo->get('seo_meta_description') }}"> @endif
+    @if($seo->get('seo_meta_keywords')) <meta name="keywords" content="{{ $seo->get('seo_meta_keywords') }}"> @endif
+    @if($seo->get('seo_author')) <meta name="author" content="{{ $seo->get('seo_author') }}"> @endif
+    @if($seo->get('seo_copyright')) <meta name="copyright" content="{{ $seo->get('seo_copyright') }}"> @endif
+    @if($seo->get('seo_robots')) <meta name="robots" content="{{ $seo->get('seo_robots') }}"> @endif
+    @if($seo->get('seo_googlebot')) <meta name="googlebot" content="{{ $seo->get('seo_googlebot') }}"> @endif
+    @if($seo->get('seo_geo_region')) <meta name="geo.region" content="{{ $seo->get('seo_geo_region') }}"> @endif
+    @if($seo->get('seo_theme_color')) <meta name="theme-color" content="{{ $seo->get('seo_theme_color') }}"> @endif
+    @if($seo->get('seo_canonical')) <link rel="canonical" href="{{ $seo->get('seo_canonical') }}"> @endif
+    @if($seo->get('seo_og_type')) <meta property="og:type" content="{{ $seo->get('seo_og_type') }}"> @endif
+    @if($seo->get('seo_og_url')) <meta property="og:url" content="{{ $seo->get('seo_og_url') }}"> @endif
+    @if($seo->get('seo_og_title')) <meta property="og:title" content="{{ $seo->get('seo_og_title') }}"> @endif
+    @if($seo->get('seo_og_description')) <meta property="og:description" content="{{ $seo->get('seo_og_description') }}"> @endif
+    @if($seo->get('seo_og_image')) <meta property="og:image" content="{{ $seo->get('seo_og_image') }}"> @endif
+    @if($seo->get('seo_og_locale')) <meta property="og:locale" content="{{ $seo->get('seo_og_locale') }}"> @endif
+    @if($seo->get('seo_og_site_name')) <meta property="og:site_name" content="{{ $seo->get('seo_og_site_name') }}"> @endif
+    @if($seo->get('seo_twitter_card')) <meta name="twitter:card" content="{{ $seo->get('seo_twitter_card') }}"> @endif
+    @if($seo->get('seo_twitter_url')) <meta name="twitter:url" content="{{ $seo->get('seo_twitter_url') }}"> @endif
+    @if($seo->get('seo_twitter_title')) <meta name="twitter:title" content="{{ $seo->get('seo_twitter_title') }}"> @endif
+    @if($seo->get('seo_twitter_description')) <meta name="twitter:description" content="{{ $seo->get('seo_twitter_description') }}"> @endif
+    @if($seo->get('seo_twitter_image')) <meta name="twitter:image" content="{{ $seo->get('seo_twitter_image') }}"> @endif
+    @if($seo->get('seo_application_name')) <meta name="application-name" content="{{ $seo->get('seo_application_name') }}"> @endif
+    @if($seo->get('seo_apple_title')) <meta name="apple-mobile-web-app-title" content="{{ $seo->get('seo_apple_title') }}"> @endif
+    @if($seo->get('seo_format_detection')) <meta name="format-detection" content="{{ $seo->get('seo_format_detection') }}"> @endif
+    @if($seo->get('seo_distribution')) <meta name="distribution" content="{{ $seo->get('seo_distribution') }}"> @endif
+    @if($seo->get('seo_rating')) <meta name="rating" content="{{ $seo->get('seo_rating') }}"> @endif
+    @if($seo->get('seo_revisit_after')) <meta name="revisit-after" content="{{ $seo->get('seo_revisit_after') }}"> @endif
+    @if($seo->get('seo_language')) <meta name="language" content="{{ $seo->get('seo_language') }}"> @endif
+
     {{-- SEO --}}
     @if (isset($setting) && $setting)
         {!! SEOMeta::generate() !!}
