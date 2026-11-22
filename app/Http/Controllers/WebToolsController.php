@@ -1,0 +1,729 @@
+<?php
+
+/*
+ |--------------------------------------------------------------------------
+ | GoBiz vCard SaaS
+ |--------------------------------------------------------------------------
+ | Developed by NativeCode © 2021 - https://nativecode.in
+ | All rights reserved
+ | Unauthorized distribution is prohibited
+ |--------------------------------------------------------------------------
+*/
+
+namespace App\Http\Controllers;
+
+use App\Setting;
+use Faker\Factory;
+use MatthiasMullie\Minify;
+use Illuminate\Http\Request;
+use Iodev\Whois\Factory as Whois;
+use Illuminate\Support\Facades\DB;
+use GeoIp2\Database\Reader as GeoIP;
+use Illuminate\Database\Eloquent\Factories\Factory as FakerFactory;
+use App\Services\GoBizCommonService;
+
+class WebToolsController extends Controller
+{
+    // Helper function to handle redirection when website is disabled
+    private function getWebsiteRedirect()
+    {
+        // Retrieve redirect URL from config table
+        $redirectUrl = DB::table('config')->where('config_key', 'website_redirect_url')->value('config_value');
+
+        // Trim trailing slashes for accurate comparison
+        $trimmedRedirectUrl = rtrim($redirectUrl ?? '', '/');
+        $trimmedBaseUrl     = rtrim(url('/'), '/');
+        $trimmedCurrentUrl  = rtrim(url()->current(), '/');
+
+        // Prevent infinite redirect loop if redirectUrl is empty, matches base URL, or matches current URL
+        if (
+            !empty($trimmedRedirectUrl) &&
+            $trimmedRedirectUrl !== $trimmedBaseUrl &&
+            $trimmedRedirectUrl !== $trimmedCurrentUrl
+        ) {
+            return redirect()->to($redirectUrl);
+        }
+
+        // Default fallback to login to avoid ERR_TOO_MANY_REDIRECTS
+        return redirect('/login');
+    }
+
+    // HTML Beautifier
+    public function htmlBeautifier()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.html-beautifier', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // HTML Minifier
+    public function htmlMinifier()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.html-minifier', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // CSS Beautifier
+    public function cssBeautifier()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") { 
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.css-beautifier', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // CSS Minifier
+    public function cssMinifier()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.css-minifier', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // CSS Minifier Result 
+    public function resultCssMinifier(Request $request)
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Request parameter
+            $css = $request->css;
+
+            // Minifier
+            $minifier = new Minify\CSS($request->css);
+            $results = $minifier->minify();
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.css-minifier', compact('supportPage', 'css', 'results', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // Random Password Generator
+    public function randomPasswordGenerator()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.random-password-generator', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // Bcrypt Password Generator
+    public function bcryptPasswordGenerator()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.bcrypt-password-generator', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // Bcrypt Password Generator Result 
+    public function resultBcryptPasswordGenerator(Request $request)
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Request parameter
+            $password = $request->password;
+
+            // Bcrypt Password Generator
+            $results = bcrypt($password);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.bcrypt-password-generator', compact('supportPage', 'password', 'results', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // MD5 Password Generator
+    public function md5PasswordGenerator()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.md5-password-generator', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // MD5 Password Generator Result 
+    public function resultMd5PasswordGenerator(Request $request)
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Request parameter
+            $password = $request->password;
+
+            // MD5 Password Generator
+            $results = md5($password);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.md5-password-generator', compact('supportPage', 'password', 'results', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // Random Word Generator
+    public function randomWordGenerator()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.random-word-generator', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // Random Word Generator Result 
+    public function resultRandomWordGenerator(Request $request)
+    {
+        $config = GoBizCommonService::config();
+
+        if ($config[38]->config_value !== "yes") {
+            return $this->getWebsiteRedirect();
+        }
+
+        if ($config[88]->config_value !== '1') {
+            abort(404);
+        }
+
+        $settings = GoBizCommonService::settings();
+        $web_template = getConfigData('web_template');
+        $supportPage = DB::table('pages')
+            ->where('template_id', $web_template)
+            ->whereIn('page_name', ['footer', 'contact'])
+            ->get();
+
+        $count = (int) $request->words;
+
+        if ($count > 9999) {
+            $results = __('Maximum limit reached');
+        } else {
+            $dictionary = [
+                'alpha',
+                'bravo',
+                'charlie',
+                'delta',
+                'echo',
+                'foxtrot',
+                'orange',
+                'cloud',
+                'river',
+                'stone',
+                'forest',
+                'shadow',
+                'pixel',
+                'vector',
+                'syntax',
+                'kernel',
+                'logic',
+                'binary',
+                'planet',
+                'galaxy',
+                'orbit',
+                'signal',
+                'crypto',
+                'matrix'
+            ];
+
+            $words = [];
+            for ($i = 0; $i < $count; $i++) {
+                $words[] = $dictionary[array_rand($dictionary)];
+            }
+
+            $results = implode(', ', $words);
+        }
+
+        return view(
+            $web_template . '::Website.pages.web-tools.random-word-generator',
+            compact('supportPage', 'count', 'results', 'settings', 'config')
+        );
+    }
+
+    // Text Counter
+    public function textCounter()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.text-counter', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // Lorem Generator
+    public function loremGenerator()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.lorem-generator', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // Emojies
+    public function emojies()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.emojies', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // JS Beautifier
+    public function jsBeautifier()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.js-beautifier', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // JS Minifier
+    public function jsMinifier()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.js-minifier', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // JS Minifier Result 
+    public function resultjsMinifier(Request $request)
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Request parameter
+            $js = $request->js;
+
+            // Minifier
+            $minifier = new Minify\JS($request->js);
+            $results = $minifier->minify();
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.js-minifier', compact('supportPage', 'js', 'results', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // DNS
+    public function dnsLookup()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.dns', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // DNS Result 
+    public function resultDnsLookup(Request $request)
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Queries
+            $domain = str_replace(['http://', 'https://'], '', $request->input('domain'));
+
+            try {
+                $results = dns_get_record($domain, DNS_A + DNS_AAAA + DNS_CNAME + DNS_MX + DNS_TXT + DNS_NS);
+            } catch (\Exception $e) {
+                $results = [];
+            }
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.dns', compact('supportPage', 'results', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // IP Address
+    public function ipLookup()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.ip', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // IP Result 
+    public function resultIpLookup(Request $request)
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Queries
+            try {
+                $results = (new GeoIP(storage_path('app/geoip/GeoLite2-City.mmdb')))->city($request->input('ip'))->raw;
+            } catch (\Exception $e) {
+                $results = false;
+            }
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.ip', compact('supportPage', 'results', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // Whois Address
+    public function whoisLookup()
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.whois', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // Whois Result 
+    public function resultWhoisLookup(Request $request)
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Input
+            $domain = str_replace(['http://', 'https://', 'www.', 'http://www.', 'https://www.'], '', $request->input('domain'));
+
+            $results = false;
+            try {
+                $results = Whois::get()->createWhois()->loadDomainInfo($domain);
+            } catch (\Exception $e) {
+                $results = [];
+            }
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.whois', compact('supportPage', 'results', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+    // QR code maker
+    public function qrMaker(Request $request)
+    {
+        // Queries
+        $config = GoBizCommonService::config();
+
+        // Check website
+        if ($config[38]->config_value == "yes") {
+            $settings = GoBizCommonService::settings();
+            $web_template = getConfigData('web_template');
+            $supportPage = GoBizCommonService::templatePageContentGet('contact', $web_template);
+
+            // Check webtools
+            if ($config[88]->config_value == '1') {
+                return view($web_template . '::Website.pages.web-tools.qr-maker', compact('supportPage', 'settings', 'config'));
+            } else {
+                return abort(404);
+            }
+        } else {
+            return $this->getWebsiteRedirect();
+        }
+    }
+
+
+    // Random word generator function
+    function getRandomWord($len)
+    {
+        $word = array_merge(range('a', 'z'), range('A', 'Z'));
+        shuffle($word);
+        return substr(implode($word), 0, $len);
+    }
+}

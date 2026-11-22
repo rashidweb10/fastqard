@@ -1,0 +1,11 @@
+{
+    "template_id": "GoBizOriginal",
+    "template_image": "gobiz_original_assets/images/gobiz-original.png",
+    "name": "GoBiz Original",
+    "main_route": "admin.web-template.gobiz-original",
+    "config_route": "admin.web-template.gobiz-original.config",
+    "version": "1.1.0",
+    "platform": "gobiz-saas",
+    "min_version": "28.0.0",
+    "documentation_url": "https://gobizsaas.com/docs/gobiz/web-templates/gobiz-original/folder-structure.html"
+}
