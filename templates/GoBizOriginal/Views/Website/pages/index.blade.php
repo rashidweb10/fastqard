@@ -298,7 +298,7 @@
                                     @if (filled($plan->price_period_label))
                                         <span
                                             class="text-sm text-{{ $plan->recommended == 1 ? 'white' : 'black' }} self-end">
-                                            /{{ $plan->price_period_label }}
+                                            {{ $plan->price_period_label }}
                                         </span>
                                     @elseif ((!str_contains(strtolower($plan->plan_name), 'trial') && (int) $plan->plan_price == 0) || $plan->validity == 9999)
                                         <span
