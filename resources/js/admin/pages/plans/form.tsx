@@ -81,6 +81,7 @@ export default function PlanForm({
         plan_name: plan?.name ?? "",
         plan_description: plan?.description ?? "",
         plan_price: str(plan?.price, "0"),
+        price_period_label: plan?.pricePeriodLabel ?? "",
         term: termFor(plan?.validity ?? 30) as Term,
         validity: str(plan?.validity, "30"),
         trial_period: str(plan?.trial, "0"),
@@ -426,6 +427,35 @@ export default function PlanForm({
                                     </p>
                                     <FieldError message={errors.trial_period} />
                                 </div>
+                                <div className="flex flex-col gap-2">
+                                    <Label htmlFor="price_period_label">
+                                        {t("Price period label")}
+                                    </Label>
+                                    <Input
+                                        id="price_period_label"
+                                        type="text"
+                                        maxLength={255}
+                                        value={data.price_period_label}
+                                        onChange={(event) =>
+                                            setData(
+                                                "price_period_label",
+                                                event.target.value,
+                                            )
+                                        }
+                                        aria-invalid={
+                                            !!errors.price_period_label
+                                        }
+                                        placeholder={t("e.g. Per Year")}
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        {t(
+                                            "Optional text shown after the price. A slash is added automatically; leave blank to use the billing period.",
+                                        )}
+                                    </p>
+                                    <FieldError
+                                        message={errors.price_period_label}
+                                    />
+                                </div>
                             </CardContent>
                         </Card>
 
@@ -745,7 +775,8 @@ export default function PlanForm({
                                               currency,
                                           )}
                                     <span className="ms-1.5 text-sm font-normal text-muted-foreground">
-                                        {periodLabel(validity, t)}
+                                        {data.price_period_label ||
+                                            periodLabel(validity, t)}
                                     </span>
                                 </span>
                                 {Number(data.trial_period) > 0 && !free && (

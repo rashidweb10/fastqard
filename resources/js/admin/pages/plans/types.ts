@@ -59,6 +59,7 @@ export type Plan = {
     name: string;
     description: string | null;
     price: number;
+    pricePeriodLabel: string | null;
     validity: number;
     trial: number;
     storage: number;

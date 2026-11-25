@@ -11146,5 +11146,9 @@
     "Not every minute": "Not every minute",
     "Auto-close needs the server cron job. It is running, so tickets are checked every hour.": "Auto-close needs the server cron job. It is running, so tickets are checked every hour.",
     "Auto-close needs the server cron job. It last ran :time, so it doesn't run every minute: tickets close only when it runs (e.g. once a day). Use this cron job to check them every hour:": "Auto-close needs the server cron job. It last ran :time, so it doesn't run every minute: tickets close only when it runs (e.g. once a day). Use this cron job to check them every hour:",
-    "Auto-close needs the server cron job, and it hasn't run yet: tickets won't close by themselves until you add this cron job on your server (once, every minute):": "Auto-close needs the server cron job, and it hasn't run yet: tickets won't close by themselves until you add this cron job on your server (once, every minute):"
+    "Auto-close needs the server cron job, and it hasn't run yet: tickets won't close by themselves until you add this cron job on your server (once, every minute):": "Auto-close needs the server cron job, and it hasn't run yet: tickets won't close by themselves until you add this cron job on your server (once, every minute):",
+    "Price period label": "Price period label",
+    "e.g. Per Year": "e.g. Per Year",
+    "Optional text shown after the price. A slash is added automatically; leave blank to use the billing period.": "Optional text shown after the price. A slash is added automatically; leave blank to use the billing period.",
+    "price period label": "price period label"
 }

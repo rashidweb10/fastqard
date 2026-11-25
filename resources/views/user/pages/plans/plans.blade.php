@@ -258,27 +258,31 @@
                                                     {{ $plan->plan_price == '0' ? __('FREE') : formatCurrency($plan->plan_price) }}
                                                 </span>
 
-                                                <small class="text-capitalize d-block text-muted">
-                                                    @if ((!str_contains(strtolower($plan->plan_name), 'trial') && (int) $plan->plan_price == 0) || $plan->validity == 9999)
-                                                        {{ __('Forever') }}
-                                                    @endif
-                                                    @if ((int) $plan->plan_price != 0 && $plan->validity >= 29 && $plan->validity <= 31)
-                                                        {{ __('Per') }} {{ __('Month') }}
-                                                    @endif
-                                                    @if ((int) $plan->plan_price != 0 && $plan->validity >= 365 && $plan->validity <= 366)
-                                                        {{ __('Per') }} {{ __('Year') }}
-                                                    @endif
-                                                    @if (str_contains(strtolower($plan->plan_name), 'trial') &&
-                                                            (int) $plan->plan_price != 0 &&
-                                                            $plan->validity > 1 &&
-                                                            $plan->validity != 9999 &&
-                                                            $plan->validity != 29 &&
-                                                            $plan->validity != 30 &&
-                                                            $plan->validity != 31 &&
-                                                            $plan->validity != 365 &&
-                                                            $plan->validity != 366 &&
-                                                            $plan->validity != 9999)
-                                                        {{ __('Per') . ' ' . $plan->validity . ' ' . __('Days') }}
+                                                <small class="d-block text-muted">
+                                                    @if (filled($plan->price_period_label))
+                                                        {{ $plan->price_period_label }}
+                                                    @else
+                                                        @if ((!str_contains(strtolower($plan->plan_name), 'trial') && (int) $plan->plan_price == 0) || $plan->validity == 9999)
+                                                            {{ __('Forever') }}
+                                                        @endif
+                                                        @if ((int) $plan->plan_price != 0 && $plan->validity >= 29 && $plan->validity <= 31)
+                                                            {{ __('Per') }} {{ __('Month') }}
+                                                        @endif
+                                                        @if ((int) $plan->plan_price != 0 && $plan->validity >= 365 && $plan->validity <= 366)
+                                                            {{ __('Per') }} {{ __('Year') }}
+                                                        @endif
+                                                        @if (str_contains(strtolower($plan->plan_name), 'trial') &&
+                                                                (int) $plan->plan_price != 0 &&
+                                                                $plan->validity > 1 &&
+                                                                $plan->validity != 9999 &&
+                                                                $plan->validity != 29 &&
+                                                                $plan->validity != 30 &&
+                                                                $plan->validity != 31 &&
+                                                                $plan->validity != 365 &&
+                                                                $plan->validity != 366 &&
+                                                                $plan->validity != 9999)
+                                                            {{ __('Per') . ' ' . $plan->validity . ' ' . __('Days') }}
+                                                        @endif
                                                     @endif
                                                 </small>
                                             </div>

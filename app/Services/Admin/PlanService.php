@@ -75,6 +75,7 @@ class PlanService
             'plan_name'        => 'required|string|max:191',
             'plan_description' => 'required|string|max:1000',
             'plan_price'       => 'required|numeric|min:0|max:9999999',
+            'price_period_label'  => 'nullable|string|max:255',
             'validity'         => 'required|integer|min:1|max:' . self::FOREVER,
             'trial_period'     => 'required|integer|min:0|max:3650',
             'storage'          => 'required|integer|min:0',
@@ -121,6 +122,7 @@ class PlanService
             'plan_name'            => __('name'),
             'plan_description'     => __('description'),
             'plan_price'           => __('price'),
+            'price_period_label'   => __('price period label'),
             'trial_period'         => __('free trial'),
             'no_of_vcards'         => __('business cards'),
             'no_of_services'       => __('services'),
@@ -152,6 +154,7 @@ class PlanService
         $plan->plan_name        = ucfirst($data['plan_name']);
         $plan->plan_description = ucfirst($data['plan_description']);
         $plan->plan_price       = $data['plan_price'];
+        $plan->price_period_label  = $data['price_period_label'] ?? null;
         $plan->validity         = (float) $data['plan_price'] == 0 ? self::FOREVER : $data['validity'];
         $plan->trial            = $data['trial_period'];
         $plan->storage          = $data['storage'];
@@ -218,6 +221,7 @@ class PlanService
             'name'           => $plan->plan_name,
             'description'    => $plan->plan_description,
             'price'          => (float) $plan->plan_price,
+            'pricePeriodLabel' => $plan->price_period_label,
             'validity'       => (int) $plan->validity,
             'trial'          => (int) $plan->trial,
             'storage'        => (int) $plan->storage,
