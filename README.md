@@ -113,7 +113,8 @@ The **Zapier** plugin posts events to the webhook URLs saved on its settings pag
 
 ## ⚠️ Database rules
 
-- **No database changes**: no migrations, tables, columns or indexes. Some migration files **do not match the real schema**.
+- **Database schema changes need explicit approval.** Do not edit the live database directly, and verify the target schema before applying a migration; some existing migrations **do not match the real schema**.
+- **Approved Display Price exception:** migration `2026_11_28_000000_add_display_price_to_plans_table.php` adds the nullable `plans.display_price` column. Apply it only after confirming the target database schema.
 - **Always check the live schema** before writing queries:
   ```bash
   php artisan tinker --execute 'foreach (DB::select("SHOW COLUMNS FROM transactions") as $c) echo "$c->Field $c->Type\n";'

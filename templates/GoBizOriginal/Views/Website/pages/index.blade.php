@@ -292,7 +292,9 @@
                                 <div class="pb-6 flex">
                                     <span
                                         class="font-heading font-bold text-4xl sm:text-2xl md:text-4xl xl:text-6xl text-{{ $plan->recommended == 1 ? 'white' : 'black' }} break-words">
-                                        {{ $plan->plan_price == 0 ? __('Free') : formatCurrency($plan->plan_price) }}
+                                        {{ filled($plan->display_price)
+                                            ? formatCurrency($plan->display_price)
+                                            : ($plan->plan_price == 0 ? __('Free') : formatCurrency($plan->plan_price)) }}
                                     </span>
 
                                     @if (filled($plan->price_period_label))

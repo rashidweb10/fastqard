@@ -81,6 +81,7 @@ export default function PlanForm({
         plan_name: plan?.name ?? "",
         plan_description: plan?.description ?? "",
         plan_price: str(plan?.price, "0"),
+        display_price: plan?.displayPrice ?? "",
         price_period_label: plan?.pricePeriodLabel ?? "",
         term: termFor(plan?.validity ?? 30) as Term,
         validity: str(plan?.validity, "30"),
@@ -404,57 +405,94 @@ export default function PlanForm({
                                         <FieldError message={errors.validity} />
                                     </div>
                                 )}
-                                <div className="flex flex-col gap-2">
-                                    <Label htmlFor="trial_period">
-                                        {t("Free trial (days)")}
-                                    </Label>
-                                    <Input
-                                        id="trial_period"
-                                        type="number"
-                                        min={0}
-                                        value={data.trial_period}
-                                        onChange={(event) =>
-                                            setData(
-                                                "trial_period",
-                                                event.target.value,
-                                            )
-                                        }
-                                        aria-invalid={!!errors.trial_period}
-                                        required
-                                    />
-                                    <p className="text-xs text-muted-foreground">
-                                        {t("0 turns the trial off.")}
-                                    </p>
-                                    <FieldError message={errors.trial_period} />
+                                <div className="flex flex-col gap-5">
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="trial_period">
+                                            {t("Free trial (days)")}
+                                        </Label>
+                                        <Input
+                                            id="trial_period"
+                                            type="number"
+                                            min={0}
+                                            value={data.trial_period}
+                                            onChange={(event) =>
+                                                setData(
+                                                    "trial_period",
+                                                    event.target.value,
+                                                )
+                                            }
+                                            aria-invalid={
+                                                !!errors.trial_period
+                                            }
+                                            required
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            {t("0 turns the trial off.")}
+                                        </p>
+                                        <FieldError
+                                            message={errors.trial_period}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="flex flex-col gap-2">
-                                    <Label htmlFor="price_period_label">
-                                        {t("Price period label")}
-                                    </Label>
-                                    <Input
-                                        id="price_period_label"
-                                        type="text"
-                                        maxLength={255}
-                                        value={data.price_period_label}
-                                        onChange={(event) =>
-                                            setData(
-                                                "price_period_label",
-                                                event.target.value,
-                                            )
-                                        }
-                                        aria-invalid={
-                                            !!errors.price_period_label
-                                        }
-                                        placeholder={t("e.g. Per Year")}
-                                    />
-                                    <p className="text-xs text-muted-foreground">
-                                        {t(
-                                            "Optional text shown after the price. A slash is added automatically; leave blank to use the billing period.",
-                                        )}
-                                    </p>
-                                    <FieldError
-                                        message={errors.price_period_label}
-                                    />
+                                <div className="flex flex-col gap-5">
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="display_price">
+                                            {t("Display Price")}
+                                        </Label>
+                                        <Input
+                                            id="display_price"
+                                            type="text"
+                                            maxLength={255}
+                                            value={data.display_price}
+                                            onChange={(event) =>
+                                                setData(
+                                                    "display_price",
+                                                    event.target.value,
+                                                )
+                                            }
+                                            aria-invalid={
+                                                !!errors.display_price
+                                            }
+                                            placeholder={t("e.g. ₹999 or Custom")}
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            {t(
+                                                "Optional text shown instead of the actual price on public pricing cards only; billing always uses Price.",
+                                            )}
+                                        </p>
+                                        <FieldError
+                                            message={errors.display_price}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="price_period_label">
+                                            {t("Price period label")}
+                                        </Label>
+                                        <Input
+                                            id="price_period_label"
+                                            type="text"
+                                            maxLength={255}
+                                            value={data.price_period_label}
+                                            onChange={(event) =>
+                                                setData(
+                                                    "price_period_label",
+                                                    event.target.value,
+                                                )
+                                            }
+                                            aria-invalid={
+                                                !!errors.price_period_label
+                                            }
+                                            placeholder={t("e.g. Per Year")}
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            {t(
+                                                "Optional text shown after the price. A slash is added automatically; leave blank to use the billing period.",
+                                            )}
+                                        </p>
+                                        <FieldError
+                                            message={errors.price_period_label}
+                                        />
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
