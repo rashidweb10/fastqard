@@ -115,6 +115,30 @@
         white-space: nowrap !important;
     }
 
+    #languageDropdown {
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #9ca3af #f3f4f6;
+    }
+
+    #languageDropdown::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #languageDropdown::-webkit-scrollbar-track {
+        background: #f3f4f6;
+        border-radius: 9999px;
+    }
+
+    #languageDropdown::-webkit-scrollbar-thumb {
+        background: #9ca3af;
+        border-radius: 9999px;
+    }
+
+    #languageDropdown::-webkit-scrollbar-thumb:hover {
+        background: #6b7280;
+    }
+
     /* RTL Logo Margin Fix: Remove mr-14 in RTL mode */
     html[dir="rtl"] .logo-wrapper,
     [dir="rtl"] .logo-wrapper {
@@ -309,7 +333,7 @@
 
                                             <!-- Dropdown with floating offset -->
                                             <div id="languageDropdown"
-                                                class="hidden bg-white text-base z-50 list-none divide-y divide-gray-100 rounded-xl shadow-xl my-4 min-w-[12rem] w-auto h-auto max-h-80 scrollbar-hidden ltr:right-0 rtl:left-0 py-2">
+                                                class="hidden bg-white text-base z-50 list-none divide-y divide-gray-100 rounded-xl shadow-xl my-4 min-w-[12rem] w-auto h-auto max-h-80 overflow-y-auto ltr:right-0 rtl:left-0 py-2">
                                                 <ul class="py-1">
                                                     @foreach (config('app.languages') as $langLocale => $langName)
                                                         <li>
