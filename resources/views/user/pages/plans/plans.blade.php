@@ -255,7 +255,9 @@
 
                                             <div class="mb-2">
                                                 <span class="plan-price">
-                                                    {{ $plan->plan_price == '0' ? __('FREE') : formatCurrency($plan->plan_price) }}
+                                                    {{ filled($plan->display_price)
+                                                        ? formatCurrency($plan->display_price)
+                                                        : ($plan->plan_price == '0' ? __('FREE') : formatCurrency($plan->plan_price)) }}
                                                 </span>
 
                                                 <small class="d-block text-muted">
